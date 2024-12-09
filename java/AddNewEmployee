@@ -1,1 +1,233 @@
 
+package com.example.practice2;
+
+import android.app.DatePickerDialog;
+import android.content.ContentValues;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import java.util.Calendar;
+import java.util.Locale;
+
+public class AddNewEmployee extends Fragment {
+
+    private DatabaseHelper dbHelper;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_add_new_employee, container, false);
+
+        dbHelper = new DatabaseHelper(getContext());
+
+        // Bind fields
+        EditText firstNameField = view.findViewById(R.id.edit_first_name);
+        EditText middleNameField = view.findViewById(R.id.edit_middle_name);
+        EditText lastNameField = view.findViewById(R.id.edit_last_name);
+        EditText dobField = view.findViewById(R.id.edit_date_of_birth);
+        EditText personalPhoneField = view.findViewById(R.id.edit_personal_phone);
+        EditText workPhoneField = view.findViewById(R.id.edit_work_phone);
+        EditText personalEmailField = view.findViewById(R.id.edit_personal_email);
+        EditText workEmailField = view.findViewById(R.id.edit_work_email);
+        EditText addressLine1Field = view.findViewById(R.id.edit_address_line_1);
+        EditText addressLine2Field = view.findViewById(R.id.edit_address_line_2);
+        EditText cityField = view.findViewById(R.id.edit_city);
+        EditText postcodeField = view.findViewById(R.id.edit_postcode);
+        EditText countyField = view.findViewById(R.id.edit_county);
+        EditText countryField = view.findViewById(R.id.edit_country);
+        EditText emergencyContactFirstNameField = view.findViewById(R.id.edit_emergency_contact_first_name);
+        EditText emergencyContactLastNameField = view.findViewById(R.id.edit_emergency_contact_last_name);
+        EditText emergencyContactPhoneField = view.findViewById(R.id.edit_emergency_contact_phone);
+        EditText emergencyContactEmailField = view.findViewById(R.id.edit_emergency_contact_email);
+        EditText salaryField = view.findViewById(R.id.edit_salary);
+        EditText employmentStartDateField = view.findViewById(R.id.edit_employment_start_date);
+
+        Button submitButton = view.findViewById(R.id.button_submit);
+
+        // Set DatePicker for DOB and Employment Start Date
+        setupDatePicker(dobField);
+        setupDatePicker(employmentStartDateField);
+
+        // Handle form submission
+        submitButton.setOnClickListener(v -> {
+            // Collect input values
+            String firstName = firstNameField.getText().toString().trim();
+            String middleName = middleNameField.getText().toString().trim();
+            String lastName = lastNameField.getText().toString().trim();
+            String dob = dobField.getText().toString().trim();
+            String personalPhone = personalPhoneField.getText().toString().trim();
+            String workPhone = workPhoneField.getText().toString().trim();
+            String personalEmail = personalEmailField.getText().toString().trim();
+            String workEmail = workEmailField.getText().toString().trim();
+            String addressLine1 = addressLine1Field.getText().toString().trim();
+            String addressLine2 = addressLine2Field.getText().toString().trim();
+            String city = cityField.getText().toString().trim();
+            String postcode = postcodeField.getText().toString().trim();
+            String county = countyField.getText().toString().trim();
+            String country = countryField.getText().toString().trim();
+            String emergencyContactFirstName = emergencyContactFirstNameField.getText().toString().trim();
+            String emergencyContactLastName = emergencyContactLastNameField.getText().toString().trim();
+            String emergencyContactPhone = emergencyContactPhoneField.getText().toString().trim();
+            String emergencyContactEmail = emergencyContactEmailField.getText().toString().trim();
+            String salary = salaryField.getText().toString().trim();
+            String employmentStartDate = employmentStartDateField.getText().toString().trim();
+
+            // Validate required fields
+            if (TextUtils.isEmpty(firstName)) {
+                firstNameField.setError("First Name is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(lastName)) {
+                lastNameField.setError("Last Name is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(dob)) {
+                dobField.setError("Date of Birth is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(personalPhone) || !isValidPhoneNumber(personalPhone)) {
+                personalPhoneField.setError("Valid Personal Phone Number is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(personalEmail) || !isValidEmail(personalEmail)) {
+                personalEmailField.setError("Valid Personal Email is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(addressLine1)) {
+                addressLine1Field.setError("Address Line 1 is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(city)) {
+                cityField.setError("City is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(postcode)) {
+                postcodeField.setError("Post Code is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(country)) {
+                countryField.setError("Country is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(emergencyContactFirstName)) {
+                emergencyContactFirstNameField.setError("Emergency Contact First Name is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(emergencyContactLastName)) {
+                emergencyContactLastNameField.setError("Emergency Contact Last Name is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(emergencyContactPhone) || !isValidPhoneNumber(emergencyContactPhone)) {
+                emergencyContactPhoneField.setError("Valid Emergency Contact Phone is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(salary) ) {
+                salaryField.setError("Valid Salary is required!");
+                return;
+            }
+            if (TextUtils.isEmpty(employmentStartDate)) {
+                employmentStartDateField.setError("Employment Start Date is required!");
+                return;
+            }
+
+            // Save to database
+            ContentValues values = new ContentValues();
+            values.put(DatabaseHelper.COLUMN_FIRSTNAME, firstName);
+            values.put(DatabaseHelper.COLUMN_MIDDLENAME, middleName);
+            values.put(DatabaseHelper.COLUMN_LASTNAME, lastName);
+            values.put(DatabaseHelper.COLUMN_DATE_OF_BIRTH, dob);
+            values.put(DatabaseHelper.COLUMN_PERSONAL_PHONE, personalPhone);
+            values.put(DatabaseHelper.COLUMN_WORK_PHONE, workPhone);
+            values.put(DatabaseHelper.COLUMN_PERSONAL_EMAIL, personalEmail);
+            values.put(DatabaseHelper.COLUMN_WORK_EMAIL, workEmail);
+            values.put(DatabaseHelper.COLUMN_ADDRESS_LINE_1, addressLine1);
+            values.put(DatabaseHelper.COLUMN_ADDRESS_LINE_2, addressLine2);
+            values.put(DatabaseHelper.COLUMN_CITY, city);
+            values.put(DatabaseHelper.COLUMN_POSTCODE, postcode);
+            values.put(DatabaseHelper.COLUMN_COUNTY, county);
+            values.put(DatabaseHelper.COLUMN_COUNTRY, country);
+            values.put(DatabaseHelper.COLUMN_EMERGENCY_CONTACT_FIRSTNAME, emergencyContactFirstName);
+            values.put(DatabaseHelper.COLUMN_EMERGENCY_CONTACT_LASTNAME, emergencyContactLastName);
+            values.put(DatabaseHelper.COLUMN_EMERGENCY_CONTACT_PHONE, emergencyContactPhone);
+            values.put(DatabaseHelper.COLUMN_EMERGENCY_CONTACT_EMAIL, emergencyContactEmail);
+            values.put(DatabaseHelper.COLUMN_CURRENT_SALARY, Double.parseDouble(salary));
+            values.put(DatabaseHelper.COLUMN_EMPLOYMENT_START_DATE, employmentStartDate);
+
+            long result = dbHelper.addEmployee(values);
+            if (result != -1) {
+                Toast.makeText(getContext(), "Employee added successfully!", Toast.LENGTH_SHORT).show();
+                // Clear all fields
+                clearFields(view);
+            } else {
+                Toast.makeText(getContext(), "Failed to add employee.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return view;
+    }
+
+    private void setupDatePicker(EditText dateField) {
+        dateField.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            DatePickerDialog datePicker = new DatePickerDialog(
+                    getContext(),
+                    (view, year, month, dayOfMonth) -> {
+                        String formattedDate = String.format(Locale.getDefault(), "%02d/%02d/%04d", dayOfMonth, month + 1, year);
+                        dateField.setText(formattedDate);
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+            );
+            datePicker.show();
+        });
+    }
+
+    private boolean isValidPhoneNumber(String phone) {
+        return phone.matches("\\d{10,15}"); // Example: Allows 10-15 digit numbers
+    }
+
+    private boolean isValidEmail(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+    private void clearFields(View view) {
+        EditText[] fields = {
+                view.findViewById(R.id.edit_first_name),
+                view.findViewById(R.id.edit_middle_name),
+                view.findViewById(R.id.edit_last_name),
+                view.findViewById(R.id.edit_date_of_birth),
+                view.findViewById(R.id.edit_personal_phone),
+                view.findViewById(R.id.edit_work_phone),
+                view.findViewById(R.id.edit_personal_email),
+                view.findViewById(R.id.edit_work_email),
+                view.findViewById(R.id.edit_address_line_1),
+                view.findViewById(R.id.edit_address_line_2),
+                view.findViewById(R.id.edit_city),
+                view.findViewById(R.id.edit_postcode),
+                view.findViewById(R.id.edit_county),
+                view.findViewById(R.id.edit_country),
+                view.findViewById(R.id.edit_emergency_contact_first_name),
+                view.findViewById(R.id.edit_emergency_contact_last_name),
+                view.findViewById(R.id.edit_emergency_contact_phone),
+                view.findViewById(R.id.edit_emergency_contact_email),
+                view.findViewById(R.id.edit_salary),
+                view.findViewById(R.id.edit_employment_start_date)
+        };
+
+        for (EditText field : fields) {
+            field.setText(""); // Clear the text
+        }
+    }
+
+
+}
