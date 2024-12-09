@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- State when the text box is pressed -->
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="#D1E7FF" /> <!-- Background color when pressed -->
+            <corners android:radius="16dp" />
+            <stroke android:width="4dp" android:color="#000000" /> <!-- Border color when pressed -->
+        </shape>
+    </item>
+
+    <!-- State when the text box is focused -->
+    <item android:state_focused="true">
+        <shape>
+            <solid android:color="#FFFFFF" /> <!-- Background color when focused -->
+            <corners android:radius="16dp" />
+            <stroke android:width="4dp" android:color="#000000" /> <!-- Border color when focused -->
+        </shape>
+    </item>
+
+    <!-- Default state -->
+    <item>
+        <shape>
+            <solid android:color="#FFFFFF" /> <!-- Default background color -->
+            <corners android:radius="16dp" />
+
+            <stroke android:width="4dp" android:color="#000000" /> <!-- Default border color -->
+        </shape>
+    </item>
+</selector>
